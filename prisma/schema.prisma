@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String
+
+  events Event[]
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  name        String
+  dateTime    DateTime
+  description String
+  imageUrl    String
+
+  locationId Int
+  location   Location @relation(fields: [locationId], references: [id])
+
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  tickets Ticket[]
+}
+
+model Location {
+  id      Int     @id @default(autoincrement())
+  address String
+  city    String
+  country String
+  events  Event[]
+}
+
+model Ticket {
+  id         Int @id @default(autoincrement())
+  eventId    Int
+  priceCents Int
+  stock      Int
+
+  event Event @relation(fields: [eventId], references: [id])
+}
